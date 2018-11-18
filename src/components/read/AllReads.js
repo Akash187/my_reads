@@ -1,12 +1,15 @@
 import React, {Component} from 'react';
 import Read from './Read';
 import {getAll, update} from '../../BooksAPI';
+import {NavLink} from 'react-router-dom';
+import add from '../../icons/add.svg';
 
 class AllReads extends Component{
   state = {
     wantToRead: [],
     currentlyReading: [],
-    read: []
+    read: [],
+    showLoadingGif: false
   };
 
   fetchBooks = () => {
@@ -22,6 +25,9 @@ class AllReads extends Component{
           wantToRead.push(book);
         else
           read.push(book);
+        this.setState({
+          showLoadingGif: false
+        });
       });
       this.setState(
         {currentlyReading, wantToRead, read}
@@ -32,11 +38,16 @@ class AllReads extends Component{
   }
 
   updateRead = (book, shelf) =>{
+    this.setState({
+      showLoadingGif: true
+    });
     update(book,shelf).then((data) => {
-      console.log(data);
       this.fetchBooks();
     }).catch((err) => {
       console.log("Error in update : ", err);
+      this.setState({
+        showLoadingGif: false
+      });
     })
   }
 
@@ -47,10 +58,22 @@ class AllReads extends Component{
   render(){
     return(
       <div>
-        <h1 className="navbar">MyReads</h1>
-        <Read title="Currently Reading" books={this.state.currentlyReading} updateRead={this.updateRead}/>
-        <Read title="Want to Read" books={this.state.wantToRead} updateRead={this.updateRead}/>
-        <Read title="Read" books={this.state.read} updateRead={this.updateRead}/>
+        {this.state.showLoadingGif && (<div className="loading">
+          <div className="loader"/>
+          <div className="loadingText">loading</div>
+        </div>)
+        }
+        <div className="navbar">MyReads</div>
+        <div className="container">
+          <Read title="Currently Reading" books={this.state.currentlyReading} updateRead={this.updateRead}/>
+          <Read title="Want to Read" books={this.state.wantToRead} updateRead={this.updateRead}/>
+          <Read title="Read" books={this.state.read} updateRead={this.updateRead}/>
+          <NavLink to="/search" read={this.state.name}>
+            <button className={'searchIcon'}>
+              <img src={add} alt="Search"/>
+            </button>
+          </NavLink>
+        </div>
       </div>
     )
   }
