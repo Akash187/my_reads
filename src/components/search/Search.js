@@ -29,26 +29,27 @@ class Search extends Component{
     })
   }
 
+  updateState = (books, placeholder) => {
+    this.setState({
+      books,
+        placeholder
+    }, () => {
+      console.log(this.state.books);
+    });
+  }
+
   searchBook = (event) => {
     if(event.target.value.length === 0){
-      this.setState({
-        books: [],
-        placeholder: "Write one or more keywords above to start searching."
-      });
+      this.updateState([], "Write one or more keywords above to start searching.");
     }else {
       search(event.target.value).then((data) => {
         if (!data.error) {
-          this.setState({
-            books: data,
-            placeholder: "No results found. Try different keywords."
-          });
+          this.updateState(data,"No results found. Try different keywords.");
         } else {
-          this.setState({
-            books: [],
-            placeholder: "No results found. Try different keywords."
-          })
+          this.updateState(data,"No results found. Try different keywords.");
         }
       }).catch((err) => {
+        console.log(event.target.value.length);
         console.log("Error in Searching.");
       });
     }
