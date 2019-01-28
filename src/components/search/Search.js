@@ -35,7 +35,7 @@ class Search extends Component{
       books,
         placeholder
     }, () => {
-      console.log(this.state.books);
+      //console.log(this.state.books);
     });
   }
 
