@@ -10,24 +10,7 @@ class Search extends Component{
   state = {
     books : [],
     placeholder: "Write one or more keywords above to start searching.",
-    showLoadingGif: false,
     timeOut: 0
-  }
-
-  updateRead = (book, shelf) =>{
-    this.setState({
-      showLoadingGif: true
-    });
-    update(book,shelf).then((data) => {
-      this.setState({
-        showLoadingGif: false
-      });
-    }).catch((err) => {
-      console.log("Error in update : ", err);
-      this.setState({
-        showLoadingGif: false
-      });
-    })
   }
 
   updateState = (books, placeholder) => {
@@ -40,11 +23,11 @@ class Search extends Component{
   }
 
   searchBook = (event) => {
+    if(this.state.timeout) clearTimeout(this.state.timeout);
     if(event.target.value.length === 0){
       this.updateState([], "Write one or more keywords above to start searching.");
     }else {
       let searchTerm = event.target.value;
-      if(this.state.timeout) clearTimeout(this.state.timeout);
       this.state.timeout = setTimeout(() => {
         search(searchTerm).then((data) => {
           if (data.error) {
@@ -63,7 +46,7 @@ class Search extends Component{
   render(){
     return(
       <div>
-        {this.state.showLoadingGif && (<div className="loading">
+        {this.props.showLoadingGif && (<div className="loading">
           <div className="loader"/>
           <div className="loadingText">loading</div>
         </div>)
@@ -80,7 +63,7 @@ class Search extends Component{
               <h2 className="placeholder">{this.state.placeholder}</h2> :
               (
                 this.state.books.map(book => (book.hasOwnProperty("title") && book.hasOwnProperty("imageLinks") && book.hasOwnProperty("authors")) &&
-                  <Book book={book} key={book.id} updateRead={this.updateRead}/>
+                  <Book book={book} key={book.id} updateRead={this.props.updateRead}/>
                 )
               )
           }
